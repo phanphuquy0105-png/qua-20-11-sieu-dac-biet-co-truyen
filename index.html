@@ -1,0 +1,2264 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#fff8f0">
+<title>Vườn Hoa Tri Ân | Tập thể 8C5</title>
+
+<!-- PHÔNG CHỮ -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&display=swap" rel="stylesheet">
+
+<style>
+/* =====================================================
+   1. THIẾT LẬP CHUNG
+===================================================== */
+:root {
+    --cream: #fff8f0;
+    --pink: #f7dce5;
+    --rose: #e9afc2;
+    --deep-rose: #b87991;
+    --lavender: #c8b5d1;
+    --mocha: #927267;
+    --gold: #c9a875;
+    --ink: #594653;
+    --shadow: 0 22px 70px rgba(117,77,95,.14);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100vh;
+    overflow: hidden;
+    color: var(--ink);
+    font-family: "Be Vietnam Pro", sans-serif;
+
+    background:
+        radial-gradient(ellipse at 12% 12%,
+            rgba(247,220,229,.85), transparent 35%),
+        radial-gradient(ellipse at 88% 85%,
+            rgba(200,181,209,.38), transparent 34%),
+        var(--cream);
+}
+
+button {
+    font: inherit;
+    color: inherit;
+}
+
+button:focus-visible {
+    outline: 2px solid var(--deep-rose);
+    outline-offset: 5px;
+}
+
+/* =====================================================
+   2. HIỆU ỨNG NỀN
+===================================================== */
+
+#petal-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 25;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.petal {
+    position: absolute;
+    top: -30px;
+    width: 13px;
+    height: 19px;
+    border-radius: 90% 0 90% 0;
+    background: linear-gradient(135deg, #fff, #e9afc2);
+    opacity: .75;
+    animation: falling linear forwards;
+}
+
+@keyframes falling {
+    to {
+        transform:
+            translate3d(var(--drift), 110vh, 0)
+            rotate(650deg);
+        opacity: .04;
+    }
+}
+
+#cursor-light {
+    position: fixed;
+    width: 230px;
+    height: 230px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 24;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+        circle,
+        rgba(233,175,194,.20),
+        transparent 68%
+    );
+    mix-blend-mode: multiply;
+}
+
+/* =====================================================
+   3. THANH ĐIỀU HƯỚNG
+===================================================== */
+
+.website {
+    height: 100svh;
+    position: relative;
+    isolation: isolate;
+}
+
+.topbar {
+    position: absolute;
+    z-index: 30;
+    top: 20px;
+    left: clamp(16px, 4vw, 54px);
+    right: clamp(16px, 4vw, 54px);
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.brand {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 24px;
+    letter-spacing: .07em;
+    color: #946779;
+}
+
+.brand small {
+    display: block;
+    font-family: "Be Vietnam Pro", sans-serif;
+    font-size: 9px;
+    letter-spacing: .24em;
+    text-transform: uppercase;
+    color: #a98c98;
+    margin-top: 1px;
+}
+
+.music-toggle {
+    border: 1px solid rgba(169,125,145,.24);
+    background: rgba(255,255,255,.65);
+    backdrop-filter: blur(12px);
+    border-radius: 99px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: .25s;
+}
+
+.music-toggle:hover {
+    background: white;
+    transform: translateY(-2px);
+}
+
+.progress {
+    position: absolute;
+    z-index: 30;
+    left: 50%;
+    top: 83px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 7px;
+}
+
+.progress-dot {
+    width: 7px;
+    height: 7px;
+    border: 0;
+    border-radius: 50%;
+    background: #e4cbd4;
+    cursor: pointer;
+    transition: .35s;
+}
+
+.progress-dot.active {
+    width: 25px;
+    border-radius: 9px;
+    background: var(--deep-rose);
+}
+
+.progress-dot.done {
+    background: var(--gold);
+}
+
+/* =====================================================
+   4. CẤU TRÚC CÁC TRANG
+===================================================== */
+
+.page {
+    position: absolute;
+    inset: 0;
+
+    display: grid;
+    place-items: center;
+
+    padding: 125px 22px 85px;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(22px) scale(.99);
+
+    transition:
+        opacity .8s ease,
+        transform .8s cubic-bezier(.2,.7,.2,1),
+        visibility .8s;
+    overflow: auto;
+}
+
+.page.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+.content {
+    width: min(1050px, 100%);
+    margin: auto;
+    text-align: center;
+}
+
+.eyebrow {
+    font-size: 10px;
+    letter-spacing: .27em;
+    text-transform: uppercase;
+    color: #b18496;
+    font-weight: 600;
+    margin-bottom: 13px;
+}
+
+h1, h2, h3 {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 500;
+    color: #855d70;
+}
+
+h1 {
+    font-size: clamp(48px, 8vw, 94px);
+    line-height: .95;
+}
+
+h2 {
+    font-size: clamp(38px, 6vw, 66px);
+    line-height: 1.02;
+    margin-bottom: 15px;
+}
+
+.subtitle {
+    font-size: clamp(12px, 1.6vw, 15px);
+    line-height: 1.9;
+    color: #927c85;
+    max-width: 620px;
+    margin: 16px auto 0;
+    font-weight: 300;
+}
+
+.handwriting {
+    font-family: "Great Vibes", cursive;
+    color: var(--deep-rose);
+    font-size: clamp(27px, 4vw, 42px);
+}
+
+.button-row {
+    display: flex;
+    justify-content: center;
+    gap: 11px;
+    flex-wrap: wrap;
+    margin-top: 27px;
+}
+
+.primary-btn,
+.secondary-btn {
+    border: 0;
+    border-radius: 99px;
+    padding: 14px 24px;
+    cursor: pointer;
+    letter-spacing: .04em;
+    font-size: 11px;
+    transition: .3s;
+}
+
+.primary-btn {
+    background: linear-gradient(120deg, #d99caf, #bd8198);
+    color: white;
+    box-shadow: 0 12px 30px rgba(189,129,152,.24);
+}
+
+.primary-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 17px 34px rgba(189,129,152,.32);
+}
+
+.secondary-btn {
+    background: rgba(255,255,255,.7);
+    border: 1px solid rgba(169,125,145,.22);
+    color: #946779;
+}
+
+.secondary-btn:hover {
+    transform: translateY(-2px);
+    background: white;
+}
+
+.page-footer {
+    position: absolute;
+    bottom: 22px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 9px;
+    letter-spacing: .2em;
+    color: #b59ba5;
+    text-transform: uppercase;
+}
+
+.page-navigation {
+    position: absolute;
+    z-index: 30;
+    bottom: 18px;
+    right: clamp(16px, 4vw, 54px);
+    display: flex;
+    gap: 8px;
+}
+
+.page-navigation button {
+    border: 1px solid rgba(169,125,145,.2);
+    background: rgba(255,255,255,.7);
+    border-radius: 50%;
+    width: 39px;
+    height: 39px;
+    cursor: pointer;
+    transition: .25s;
+}
+
+.page-navigation button:hover {
+    background: white;
+    transform: translateY(-2px);
+}
+
+.page-navigation button:disabled {
+    opacity: .25;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* =====================================================
+   TRANG 1 – NỤ HOA KHAI MỞ KHU VƯỜN
+===================================================== */
+
+.garden-stage {
+    height: clamp(260px, 40vh, 410px);
+    display: grid;
+    place-items: center;
+    position: relative;
+    margin: 0 auto;
+    max-width: 560px;
+}
+
+.moonlight {
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle,
+        rgba(255,255,255,.9),
+        rgba(247,220,229,.25) 64%,
+        transparent 70%
+    );
+}
+
+.gate {
+    position: absolute;
+    bottom: 0;
+    width: 290px;
+    height: 115px;
+    border: 2px solid rgba(190,145,164,.3);
+    border-bottom: 0;
+    border-radius: 150px 150px 0 0;
+}
+
+.gate::before,
+.gate::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    width: 2px;
+    height: 125px;
+    background: #cbaab7;
+}
+
+.gate::before { left: 0; }
+.gate::after { right: 0; }
+
+.flower-button {
+    position: relative;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    width: 220px;
+    height: 250px;
+    display: grid;
+    place-items: center;
+    transition: transform .5s;
+}
+
+.flower-button:hover {
+    transform: scale(1.04);
+}
+
+.stem {
+    position: absolute;
+    bottom: 9px;
+    width: 5px;
+    height: 118px;
+    background: linear-gradient(90deg, #8ba88d, #b3c6a2);
+    border-radius: 9px;
+}
+
+.leaf {
+    position: absolute;
+    width: 54px;
+    height: 25px;
+    background: linear-gradient(135deg, #b7cba9, #829e85);
+    border-radius: 100% 0 100% 0;
+    bottom: 70px;
+    left: calc(50% - 5px);
+    transform: rotate(20deg);
+}
+
+.leaf.two {
+    left: calc(50% - 48px);
+    bottom: 94px;
+    transform: scaleX(-1) rotate(18deg);
+}
+
+.bud {
+    position: absolute;
+    top: 42px;
+    width: 34px;
+    height: 65px;
+    background: linear-gradient(135deg, #f9e5eb, #d78fa9);
+    border-radius: 70% 70% 45% 45%;
+    transform-origin: bottom center;
+    box-shadow: 0 10px 25px #d99caf55;
+    transition: 1.2s cubic-bezier(.2,.8,.2,1);
+}
+
+.bud::before,
+.bud::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    width: 34px;
+    height: 60px;
+    border-radius: 80% 80% 35% 35%;
+    background: linear-gradient(135deg, #f9e5eb, #d78fa9);
+    transform-origin: bottom;
+}
+
+.bud::before {
+    transform: rotate(-32deg);
+    left: -13px;
+}
+
+.bud::after {
+    transform: rotate(32deg);
+    right: -13px;
+}
+
+.flower-core {
+    position: absolute;
+    top: 79px;
+    width: 27px;
+    height: 27px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff5bd, #d9b66e);
+    opacity: 0;
+    transition: .8s .25s;
+    box-shadow: 0 0 28px #e8cc8a;
+}
+
+.flower-button.bloomed .bud {
+    transform: scale(1.3);
+    border-radius: 70% 70% 50% 50%;
+}
+
+.flower-button.bloomed .bud::before {
+    transform: rotate(-66deg) scale(1.12);
+}
+
+.flower-button.bloomed .bud::after {
+    transform: rotate(66deg) scale(1.12);
+}
+
+.flower-button.bloomed .flower-core {
+    opacity: 1;
+}
+
+/* =====================================================
+   TRANG 2 – PHONG THƯ
+===================================================== */
+
+.envelope-wrap {
+    width: min(440px, 90vw);
+    height: 280px;
+    margin: 30px auto 10px;
+    position: relative;
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.envelope {
+    position: absolute;
+    inset: 50px 0 0;
+    background: linear-gradient(145deg, #f3d8e0, #e6bdcb);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+.envelope::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(135deg, transparent 49.5%, #dcaebe 50%) left/50% 100% no-repeat,
+        linear-gradient(225deg, transparent 49.5%, #e8c6d2 50%) right/50% 100% no-repeat;
+    z-index: 2;
+}
+
+.envelope-flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 58%;
+    background: linear-gradient(145deg, #f8e5eb, #e8bdcc);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: top;
+    transition: transform .9s;
+    z-index: 4;
+}
+
+.seal {
+    position: absolute;
+    z-index: 5;
+    top: 48%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #e9b6c5, #b8758e);
+    color: white;
+    display: grid;
+    place-items: center;
+    font-size: 23px;
+    box-shadow: 0 5px 15px #9e637555;
+    transition: .4s;
+}
+
+.letter {
+    position: absolute;
+    z-index: 3;
+    left: 7%;
+    right: 7%;
+    bottom: 15px;
+    height: 190px;
+    background: #fffdf9;
+    border-radius: 4px;
+    padding: 25px 23px;
+    text-align: left;
+    overflow: hidden;
+    transform: translateY(0);
+    transition: transform 1s, height 1s;
+    box-shadow: 0 5px 20px #9c75801c;
+}
+
+.letter p {
+    font-size: 11px;
+    line-height: 1.85;
+    color: #806d74;
+    margin: 9px 0;
+}
+
+.letter .letter-title {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 25px;
+    color: #a56e83;
+    margin: 0;
+}
+
+.envelope-wrap.open .envelope-flap {
+    transform: rotateX(180deg);
+    z-index: 1;
+}
+
+.envelope-wrap.open .seal {
+    opacity: 0;
+    transform: translate(-50%, -30%) scale(.5);
+}
+
+.envelope-wrap.open .letter {
+    transform: translateY(-95px);
+    height: 280px;
+    overflow: auto;
+}
+
+/* =====================================================
+   TRANG 3 – NĂM ĐÓA HOA TƯƠNG TÁC
+===================================================== */
+
+.flower-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: clamp(8px, 2vw, 20px);
+    margin: 35px auto 0;
+    max-width: 900px;
+}
+
+.memory-flower {
+    border: 1px solid #edd9e1;
+    background: rgba(255,255,255,.48);
+    border-radius: 90px 90px 22px 22px;
+    padding: 19px 8px 15px;
+    cursor: pointer;
+    min-height: 155px;
+    transition: .35s;
+    box-shadow: 0 8px 25px #9b748018;
+}
+
+.memory-flower:hover {
+    transform: translateY(-8px);
+    background: white;
+}
+
+.flower-icon {
+    font-size: 43px;
+    display: block;
+    filter: drop-shadow(0 5px 7px #c98fa055);
+    transition: .5s;
+}
+
+.memory-flower.opened .flower-icon {
+    transform: rotate(25deg) scale(1.18);
+}
+
+.memory-flower span:last-child {
+    display: block;
+    font-size: 10px;
+    margin-top: 9px;
+    color: #967783;
+}
+
+.memory-card {
+    max-width: 540px;
+    margin: 18px auto 0;
+    padding: 16px 22px;
+    background: rgba(255,255,255,.75);
+    border: 1px solid #f0dce4;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    font-family: "Cormorant Garamond", serif;
+    font-size: 23px;
+    color: #8e6476;
+    min-height: 65px;
+    display: grid;
+    place-items: center;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: .4s;
+}
+
+.memory-card.show {
+    opacity: 1;
+    transform: none;
+}
+
+.counter {
+    font-size: 11px;
+    color: #ad8997;
+    margin-top: 17px;
+}
+
+/* =====================================================
+   TRANG 4 – ALBUM POLAROID
+===================================================== */
+
+.polaroids {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(0px, 1.4vw, 18px);
+    margin: 35px auto 10px;
+    perspective: 1000px;
+    flex-wrap: wrap;
+}
+
+.polaroid {
+    width: clamp(115px, 17vw, 170px);
+    padding: 10px 10px 16px;
+    background: white;
+    border: 0;
+    box-shadow: 0 15px 35px #76515f24;
+    transform: rotate(var(--rotation)) translateY(var(--lift));
+    cursor: pointer;
+    transition: transform .5s, box-shadow .5s;
+    position: relative;
+}
+
+.polaroid:hover {
+    transform: rotate(0) translateY(-15px) scale(1.06);
+    z-index: 3;
+    box-shadow: 0 24px 50px #76515f35;
+}
+
+.polaroid img {
+    width: 100%;
+    aspect-ratio: 4/5;
+    object-fit: cover;
+    background: linear-gradient(145deg, #f5e3e9, #eee5ef);
+    display: block;
+}
+
+.photo-caption {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 17px;
+    color: #98717f;
+    margin-top: 10px;
+}
+
+.photo-hint {
+    font-size: 10px;
+    color: #a68d97;
+    margin-top: 15px;
+}
+
+.photo-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    background: #4d3446c9;
+    backdrop-filter: blur(10px);
+    display: none;
+    place-items: center;
+    padding: 25px;
+}
+
+.photo-modal.show {
+    display: grid;
+}
+
+.photo-modal img {
+    max-width: min(80vw, 620px);
+    max-height: 75vh;
+    object-fit: contain;
+    padding: 12px 12px 35px;
+    background: white;
+    box-shadow: 0 30px 80px #24131f70;
+}
+
+.photo-modal button {
+    position: absolute;
+    top: 22px;
+    right: 25px;
+    background: white;
+    border: 0;
+    border-radius: 50%;
+    width: 42px;
+    height: 42px;
+    cursor: pointer;
+}
+
+/* =====================================================
+   TRANG 5 – MÁY PHÁT NHẠC
+===================================================== */
+
+.music-card {
+    max-width: 570px;
+    margin: 35px auto 0;
+    padding: 30px;
+    background: rgba(255,255,255,.65);
+    border: 1px solid #f0dce4;
+    border-radius: 26px;
+    box-shadow: var(--shadow);
+}
+
+.vinyl {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 22px;
+    border-radius: 50%;
+    background: repeating-radial-gradient(
+        circle,
+        #3e3340 0 3px,
+        #51414e 4px 6px
+    );
+    display: grid;
+    place-items: center;
+    box-shadow: 0 12px 25px #49354535;
+    position: relative;
+}
+
+.vinyl::before {
+    content: "";
+    position: absolute;
+    inset: 48px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #f5d9e3, #bd8499);
+}
+
+.vinyl::after {
+    content: "";
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: white;
+}
+
+.vinyl.playing {
+    animation: spin 5s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.music-name {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 29px;
+    color: #8f6677;
+}
+
+.music-sub {
+    font-size: 10px;
+    color: #aa909b;
+    margin-top: 5px;
+}
+
+.wave {
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    margin: 20px 0;
+}
+
+.wave i {
+    display: block;
+    width: 3px;
+    height: 8px;
+    border-radius: 5px;
+    background: #d69bad;
+    opacity: .7;
+}
+
+.wave.active i {
+    animation: wave .8s ease-in-out infinite alternate;
+}
+
+.wave i:nth-child(3n) { animation-delay: .2s; }
+.wave i:nth-child(2n) { animation-delay: .4s; }
+
+@keyframes wave {
+    to { height: 30px; opacity: 1; }
+}
+
+.music-controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.music-controls button {
+    border: 0;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    background: #f3dce4;
+    color: #946779;
+    cursor: pointer;
+    font-size: 17px;
+}
+
+.music-note {
+    font-size: 10px;
+    color: #a58d97;
+    margin-top: 15px;
+    line-height: 1.7;
+}
+
+/* =====================================================
+   TRANG 6 – TÁM NGÔI SAO LỜI CHÚC
+===================================================== */
+
+.star-field {
+    position: relative;
+    width: min(700px, 95vw);
+    height: clamp(270px, 42vh, 390px);
+    margin: 20px auto 0;
+}
+
+.wish-star {
+    position: absolute;
+    border: 0;
+    background: transparent;
+    color: #d1ad69;
+    font-size: 31px;
+    cursor: pointer;
+    filter: drop-shadow(0 0 10px #e8d6a1);
+    transition: transform .4s, color .4s;
+}
+
+.wish-star:hover {
+    transform: scale(1.45) rotate(15deg);
+    color: #b77c94;
+}
+
+.wish-star.seen {
+    color: #b87991;
+}
+
+.wish-box {
+    max-width: 520px;
+    min-height: 60px;
+    margin: -3px auto 0;
+    padding: 14px 20px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.68);
+    border: 1px solid #efdae3;
+    color: #8f6677;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 23px;
+    opacity: 0;
+    transition: .4s;
+}
+
+.wish-box.show {
+    opacity: 1;
+}
+
+/* =====================================================
+   TRANG 7 – LỜI HỨA
+===================================================== */
+
+.path-scene {
+    height: clamp(180px, 28vh, 270px);
+    max-width: 760px;
+    margin: 25px auto 15px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 50% 50% 15px 15px;
+    background: linear-gradient(
+        180deg,
+        #f5e7e9,
+        #fff6e8 68%,
+        #dce4d2
+    );
+    box-shadow: inset 0 -30px 45px #a5b79a22;
+}
+
+.sunrise {
+    position: absolute;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff9d9, #f3d7b5);
+    left: 50%;
+    top: 32px;
+    transform: translateX(-50%);
+    box-shadow: 0 0 55px #f4d7b4;
+}
+
+.path {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 45%;
+    height: 62%;
+    background: linear-gradient(90deg, #c7b8a8, #f5e8d8, #c7b8a8);
+    clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
+}
+
+.horizon {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 45px;
+    background: linear-gradient(0deg, #9eaf91, #b9c8a7);
+    clip-path: polygon(
+        0 70%, 12% 48%, 22% 75%, 36% 42%,
+        50% 75%, 67% 38%, 82% 73%, 100% 43%,
+        100% 100%, 0 100%
+    );
+}
+
+.promise {
+    max-width: 690px;
+    margin: 0 auto;
+    font-size: 13px;
+    line-height: 2;
+    color: #806e75;
+    font-weight: 300;
+}
+
+.promise p {
+    margin: 9px 0;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: .8s;
+}
+
+.promise.reveal p {
+    opacity: 1;
+    transform: none;
+}
+
+.promise.reveal p:nth-child(2) {
+    transition-delay: .35s;
+}
+
+.promise.reveal p:nth-child(3) {
+    transition-delay: .7s;
+}
+
+/* =====================================================
+   TRANG 8 – ĐÓA HOA CUỐI CÙNG
+===================================================== */
+
+.final-flower {
+    width: 210px;
+    height: 210px;
+    margin: 0 auto 15px;
+    position: relative;
+    display: grid;
+    place-items: center;
+}
+
+.final-flower span {
+    position: absolute;
+    width: 78px;
+    height: 115px;
+    left: 66px;
+    top: 5px;
+    border-radius: 80% 80% 45% 45%;
+    background: linear-gradient(145deg, #f7dce5, #d38da5);
+    transform-origin: bottom center;
+    opacity: 0;
+    transition: 1.2s cubic-bezier(.2,.7,.2,1);
+}
+
+.final-flower.bloom span {
+    opacity: 1;
+}
+
+.final-flower.bloom span:nth-child(1) { transform: rotate(0deg) translateY(-10px); }
+.final-flower.bloom span:nth-child(2) { transform: rotate(45deg) translateY(-10px); }
+.final-flower.bloom span:nth-child(3) { transform: rotate(90deg) translateY(-10px); }
+.final-flower.bloom span:nth-child(4) { transform: rotate(135deg) translateY(-10px); }
+.final-flower.bloom span:nth-child(5) { transform: rotate(180deg) translateY(-10px); }
+.final-flower.bloom span:nth-child(6) { transform: rotate(225deg) translateY(-10px); }
+.final-flower.bloom span:nth-child(7) { transform: rotate(270deg) translateY(-10px); }
+.final-flower.bloom span:nth-child(8) { transform: rotate(315deg) translateY(-10px); }
+
+.final-flower b {
+    position: relative;
+    z-index: 2;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fff4c9, #d8b36f);
+    box-shadow: 0 0 35px #e8cc8a;
+}
+
+.final-copy {
+    opacity: 0;
+    transform: translateY(15px);
+    transition: 1s .5s;
+}
+
+.final-copy.show {
+    opacity: 1;
+    transform: none;
+}
+
+.final-copy .big-line {
+    font-family: "Cormorant Garamond", serif;
+    font-size: clamp(32px, 5vw, 55px);
+    color: #93677a;
+    margin: 10px 0;
+}
+
+.final-copy p {
+    font-size: 12px;
+    line-height: 1.8;
+    color: #9b838d;
+}
+
+/* =====================================================
+   5. HIỂN THỊ TRÊN ĐIỆN THOẠI
+===================================================== */
+
+@media (max-width: 650px) {
+    .topbar { top: 13px; }
+    .brand { font-size: 19px; }
+    .progress { top: 68px; gap: 5px; }
+    .progress-dot { width: 6px; height: 6px; }
+    .progress-dot.active { width: 19px; }
+
+    .page { padding: 110px 16px 75px; }
+
+    .flower-grid {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 5px;
+    }
+
+    .memory-flower {
+        min-height: 120px;
+        padding: 12px 3px;
+    }
+
+    .flower-icon { font-size: 30px; }
+
+    .memory-flower span:last-child {
+        font-size: 8px;
+    }
+
+    .polaroids { gap: 8px; }
+
+    .polaroid {
+        width: clamp(95px, 28vw, 135px);
+        padding: 7px 7px 11px;
+    }
+
+    .photo-caption { font-size: 14px; }
+
+    .music-card { padding: 22px 15px; }
+    .star-field { height: 290px; }
+
+    .page-navigation { bottom: 12px; }
+    .page-footer { bottom: 23px; font-size: 8px; }
+}
+
+/* TÔN TRỌNG CÀI ĐẶT GIẢM CHUYỂN ĐỘNG */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="petal-layer"></div>
+<div id="cursor-light"></div>
+
+<div class="website">
+
+    <!-- THANH ĐẦU TRANG -->
+    <header class="topbar">
+        <div class="brand">
+            Vườn Hoa Tri Ân
+            <small>Món quà nhỏ từ tập thể 8C5</small>
+        </div>
+
+        <button class="music-toggle" id="musicToggle">
+            ♫ Bật nhạc
+        </button>
+    </header>
+
+    <!-- TIẾN ĐỘ 8 TRANG -->
+    <nav class="progress" id="progress"
+         aria-label="Điều hướng tám trang"></nav>
+
+    <!-- ================================================
+         TRANG 1: NỤ HOA KHAI MỞ
+    ================================================= -->
+
+    <section class="page active" data-page="0">
+        <div class="content">
+
+            <div class="eyebrow">
+                Một khu vườn dành riêng cho cô
+            </div>
+
+            <div class="garden-stage">
+
+                <div class="moonlight"></div>
+                <div class="gate"></div>
+
+                <button class="flower-button" id="firstFlower"
+                        aria-label="Chạm để hoa nở">
+
+                    <span class="stem"></span>
+                    <span class="leaf"></span>
+                    <span class="leaf two"></span>
+                    <span class="bud"></span>
+                    <span class="flower-core"></span>
+
+                </button>
+            </div>
+
+            <h1>Cánh Hoa Tri Ân</h1>
+
+            <div class="handwriting">
+                Nơi những yêu thương khẽ nở
+            </div>
+
+            <p class="subtitle" id="openingText">
+                Cô hãy chạm vào nụ hoa nhỏ,
+                để khu vườn kỷ niệm của 8C5 bắt đầu thức giấc.
+            </p>
+
+            <div class="button-row">
+                <button class="primary-btn" id="enterGarden">
+                    Chạm để khu vườn nở hoa
+                </button>
+            </div>
+
+        </div>
+
+        <div class="page-footer">
+            20 · 11 · 2026 &nbsp; ✧ &nbsp; 8C5
+        </div>
+    </section>
+
+    <!-- ================================================
+         TRANG 2: PHONG THƯ TRI ÂN
+    ================================================= -->
+
+    <section class="page" data-page="1">
+        <div class="content">
+
+            <div class="eyebrow">
+                Trang thứ hai · Lời gửi trao
+            </div>
+
+            <h2>Một lá thư nhỏ</h2>
+
+            <p class="subtitle">
+                Có những điều chúng em muốn nói,
+                đã được nâng niu và cất giữ trong chiếc phong thư này.
+            </p>
+
+            <div class="envelope-wrap" id="envelope"
+                 role="button" tabindex="0"
+                 aria-label="Chạm để mở phong thư">
+
+                <div class="envelope">
+
+                    <div class="envelope-flap"></div>
+
+                    <div class="seal">♡</div>
+
+                    <div class="letter">
+
+                        <p class="letter-title">
+                            Gửi cô kính yêu,
+                        </p>
+
+                        <p>
+                            Trên hành trình trưởng thành của chúng em,
+                            cô luôn là người dịu dàng đồng hành,
+                            kiên nhẫn chỉ bảo và trao đi thật nhiều yêu thương.
+                        </p>
+
+                        <p>
+                            Cảm ơn cô vì những lời động viên,
+                            những lần nhắc nhở và cả những điều bình dị
+                            mà đôi khi chúng em chưa kịp nhận ra.
+                        </p>
+
+                        <p>
+                            Nhân ngày 20/11, tập thể 8C5 xin gửi đến cô
+                            lời tri ân chân thành nhất.
+                            Mong cô luôn mạnh khỏe, bình an và hạnh phúc.
+                        </p>
+
+                        <p style="
+                            text-align:right;
+                            font-family:'Great Vibes';
+                            font-size:24px;
+                            color:#b87991">
+                            Thương gửi cô, 8C5 ♡
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+
+            <p class="subtitle" id="letterHint">
+                Chạm vào phong thư để mở lời yêu thương.
+            </p>
+
+            <div class="button-row">
+                <button class="secondary-btn" id="envelopeToggle">
+                    Mở / đóng thư
+                </button>
+
+                <button class="primary-btn next-action"
+                        data-next="2" disabled>
+                    Tiếp tục hành trình
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ================================================
+         TRANG 3: NĂM ĐÓA HOA TƯƠNG TÁC
+    ================================================= -->
+
+    <section class="page" data-page="2">
+        <div class="content">
+
+            <div class="eyebrow">
+                Trang thứ ba · Năm đóa hoa biết nói
+            </div>
+
+            <h2>Cảm ơn cô vì...</h2>
+
+            <p class="subtitle">
+                Mỗi đóa hoa là một điều chúng em luôn ghi nhớ.
+                Cô hãy chạm vào từng bông hoa nhé.
+            </p>
+
+            <div class="flower-grid" id="memoryFlowers">
+
+                <button class="memory-flower"
+                    data-message="Cảm ơn cô vì luôn kiên nhẫn lắng nghe và thấu hiểu chúng em.">
+                    <span class="flower-icon">🌷</span>
+                    <span>Sự dịu dàng</span>
+                </button>
+
+                <button class="memory-flower"
+                    data-message="Cảm ơn cô vì đã tận tình chỉ bảo, giúp chúng em tiến bộ từng ngày.">
+                    <span class="flower-icon">🌸</span>
+                    <span>Tận tâm</span>
+                </button>
+
+                <button class="memory-flower"
+                    data-message="Cảm ơn cô vì luôn tin tưởng và động viên chúng em cố gắng.">
+                    <span class="flower-icon">🌼</span>
+                    <span>Niềm tin</span>
+                </button>
+
+                <button class="memory-flower"
+                    data-message="Cảm ơn cô vì đã ở bên, sẻ chia cùng tập thể 8C5.">
+                    <span class="flower-icon">🌺</span>
+                    <span>Đồng hành</span>
+                </button>
+
+                <button class="memory-flower"
+                    data-message="Cảm ơn cô vì đã gieo trong chúng em những điều tốt đẹp.">
+                    <span class="flower-icon">🪻</span>
+                    <span>Yêu thương</span>
+                </button>
+
+            </div>
+
+            <div class="memory-card" id="memoryCard">
+                Chạm vào một đóa hoa để đọc lời cảm ơn.
+            </div>
+
+            <div class="counter" id="flowerCount">
+                0 / 5 đóa hoa đã nở
+            </div>
+
+            <div class="button-row">
+                <button class="primary-btn next-action"
+                        data-next="3" disabled>
+                    Ngắm nhìn kỷ niệm
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ================================================
+         TRANG 4: ALBUM KỶ NIỆM
+    ================================================= -->
+
+    <section class="page" data-page="3">
+        <div class="content">
+
+            <div class="eyebrow">
+                Trang thứ tư · Những ngày tháng thân thương
+            </div>
+
+            <h2>Kỷ niệm còn đây</h2>
+
+            <p class="subtitle">
+                Mỗi khung hình là một mảnh ký ức.
+                Hãy thay ảnh mẫu bằng những khoảnh khắc đẹp của lớp mình.
+            </p>
+
+            <div class="polaroids" id="polaroids">
+
+                <button class="polaroid"
+                    style="--rotation:-8deg;--lift:12px"
+                    data-img="images/anh1.jpg">
+                    <img src="images/anh1.jpg"
+                         alt="Kỷ niệm lớp 8C5"
+                         onerror="this.style.background='linear-gradient(135deg,#f4dce5,#e8e0ef)';this.removeAttribute('src')">
+                    <span class="photo-caption">Ngày bên nhau</span>
+                </button>
+
+                <button class="polaroid"
+                    style="--rotation:5deg;--lift:-8px"
+                    data-img="images/anh2.jpg">
+                    <img src="images/anh2.jpg"
+                         alt="Khoảnh khắc đáng nhớ"
+                         onerror="this.style.background='linear-gradient(135deg,#f2e5d8,#e8dce8)';this.removeAttribute('src')">
+                    <span class="photo-caption">Nụ cười thân quen</span>
+                </button>
+
+                <button class="polaroid"
+                    style="--rotation:-4deg;--lift:9px"
+                    data-img="images/anh3.jpg">
+                    <img src="images/anh3.jpg"
+                         alt="Hoạt động của lớp"
+                         onerror="this.style.background='linear-gradient(135deg,#f7e3e9,#dce9e1)';this.removeAttribute('src')">
+                    <span class="photo-caption">Cùng nhau lớn lên</span>
+                </button>
+
+                <button class="polaroid"
+                    style="--rotation:7deg;--lift:-12px"
+                    data-img="images/anh4.jpg">
+                    <img src="images/anh4.jpg"
+                         alt="Kỷ niệm cùng cô"
+                         onerror="this.style.background='linear-gradient(135deg,#eee0e9,#f4e8d8)';this.removeAttribute('src')">
+                    <span class="photo-caption">Có cô trong tim</span>
+                </button>
+
+                <button class="polaroid"
+                    style="--rotation:-5deg;--lift:8px"
+                    data-img="images/anh5.jpg">
+                    <img src="images/anh5.jpg"
+                         alt="Tập thể 8C5"
+                         onerror="this.style.background='linear-gradient(135deg,#f3e1e5,#e5e5f0)';this.removeAttribute('src')">
+                    <span class="photo-caption">Một thời đáng nhớ</span>
+                </button>
+
+            </div>
+
+            <p class="photo-hint">
+                Chạm vào từng tấm ảnh để phóng to.
+            </p>
+
+            <div class="button-row">
+                <button class="primary-btn next-action"
+                        data-next="4">
+                    Lắng nghe giai điệu
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ================================================
+         TRANG 5: ÂM NHẠC
+    ================================================= -->
+
+    <section class="page" data-page="4">
+        <div class="content">
+
+            <div class="eyebrow">
+                Trang thứ năm · Giai điệu yêu thương
+            </div>
+
+            <h2>Một bản nhạc dành tặng cô</h2>
+
+            <p class="subtitle">
+                Xin gửi cô một giai điệu dịu dàng,
+                thay cho những lời đôi khi chúng em còn ngại ngùng chưa nói.
+            </p>
+
+            <div class="music-card">
+
+                <div class="vinyl" id="vinyl"></div>
+
+                <div class="music-name">
+                    Giai điệu tri ân
+                </div>
+
+                <div class="music-sub">
+                    MÓN QUÀ ÂM NHẠC TỪ 8C5
+                </div>
+
+                <div class="wave" id="wave"></div>
+
+                <div class="music-controls">
+                    <button id="playMusic" aria-label="Phát nhạc">
+                        ▶
+                    </button>
+
+                    <button id="pauseMusic" aria-label="Tạm dừng nhạc">
+                        Ⅱ
+                    </button>
+                </div>
+
+                <div class="music-note" id="musicNote">
+                    Thêm tệp nhạc tên <b>nhac.mp3</b>
+                    vào cùng thư mục với trang này để phát bản nhạc của lớp.
+                </div>
+
+            </div>
+
+            <div class="button-row">
+                <button class="primary-btn next-action"
+                        data-next="5">
+                    Gửi cô những lời chúc
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ================================================
+         TRANG 6: TÁM NGÔI SAO LỜI CHÚC
+    ================================================= -->
+
+    <section class="page" data-page="5">
+        <div class="content">
+
+            <div class="eyebrow">
+                Trang thứ sáu · Bầu trời lời chúc
+            </div>
+
+            <h2>Tám vì sao yêu thương</h2>
+
+            <p class="subtitle">
+                Mỗi vì sao mang theo một lời chúc nhỏ.
+                Chạm vào từng ngôi sao để thắp sáng bầu trời dành tặng cô.
+            </p>
+
+            <div class="star-field" id="starField"></div>
+
+            <div class="wish-box" id="wishBox">
+                Một lời chúc đang chờ cô khám phá.
+            </div>
+
+            <div class="counter" id="starCount">
+                0 / 8 lời chúc đã được thắp sáng
+            </div>
+
+            <div class="button-row">
+                <button class="primary-btn next-action"
+                        data-next="6" disabled>
+                    Đến lời hứa của chúng em
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ================================================
+         TRANG 7: LỜI HỨA
+    ================================================= -->
+
+    <section class="page" data-page="6">
+        <div class="content">
+
+            <div class="eyebrow">
+                Trang thứ bảy · Lời hứa từ 8C5
+            </div>
+
+            <h2>Chúng em sẽ cố gắng</h2>
+
+            <div class="path-scene">
+                <div class="sunrise"></div>
+                <div class="path"></div>
+                <div class="horizon"></div>
+            </div>
+
+            <div class="promise" id="promise">
+
+                <p>
+                    Chúng em biết mình vẫn còn những vụng về,
+                    đôi khi còn khiến cô phải bận lòng.
+                    Nhưng chúng em sẽ cố gắng trưởng thành hơn mỗi ngày.
+                </p>
+
+                <p>
+                    Chúng em hứa sẽ chăm ngoan hơn, đoàn kết hơn
+                    và nỗ lực hơn trong học tập;
+                    biết yêu thương, sẻ chia và có trách nhiệm với tập thể.
+                </p>
+
+                <p>
+                    Mong rằng khi nhìn lại chặng đường đã qua,
+                    cô sẽ luôn mỉm cười vì đã từng đồng hành cùng tập thể 8C5.
+                </p>
+
+            </div>
+
+            <div class="button-row">
+
+                <button class="primary-btn" id="revealPromise">
+                    Đọc lời hứa của chúng em
+                </button>
+
+                <button class="secondary-btn next-action"
+                        data-next="7" disabled>
+                    Khép lại khu vườn
+                </button>
+
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ================================================
+         TRANG 8: ĐÓA HOA CUỐI CÙNG
+    ================================================= -->
+
+    <section class="page" data-page="7">
+        <div class="content">
+
+            <div class="eyebrow">
+                Trang cuối · Đóa hoa tri ân
+            </div>
+
+            <div class="final-flower" id="finalFlower">
+                <span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span>
+                <b></b>
+            </div>
+
+            <div class="final-copy" id="finalCopy">
+
+                <div class="handwriting">
+                    Cô đã giúp chúng em nở hoa
+                </div>
+
+                <div class="big-line">
+                    Và chúng em sẽ luôn nhớ mãi.
+                </div>
+
+                <p>
+                    Nhân ngày Nhà giáo Việt Nam 20/11<br>
+                    Chúc cô luôn mạnh khỏe, bình an và hạnh phúc.
+                </p>
+
+                <div class="handwriting">
+                    Với tất cả yêu thương,
+                </div>
+
+                <h2 style="font-size:42px;margin-top:5px">
+                    TẬP THỂ LỚP 8C5
+                </h2>
+
+                <p>
+                    TRƯỜNG THCS HUỲNH THÚC KHÁNG · 20.11.2026
+                </p>
+
+            </div>
+
+            <div class="button-row">
+                <button class="primary-btn" id="replay">
+                    Bắt đầu lại khu vườn
+                </button>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- NÚT QUA LẠI -->
+    <div class="page-navigation">
+        <button id="prevPage" aria-label="Trang trước" disabled>
+            ←
+        </button>
+
+        <button id="nextPage" aria-label="Trang tiếp theo" disabled>
+            →
+        </button>
+    </div>
+
+</div>
+
+<!-- KHUNG PHÓNG TO ẢNH -->
+<div class="photo-modal" id="photoModal">
+    <button id="closePhoto" aria-label="Đóng ảnh">✕</button>
+    <img id="modalImage" alt="Ảnh kỷ niệm phóng to">
+</div>
+
+<!-- TỆP NHẠC: ĐẶT NHAC.MP3 CẠNH INDEX.HTML -->
+<audio id="bgMusic" src="nhac.mp3" loop preload="none"></audio>
+
+<script>
+/* =====================================================
+   1. ĐIỀU HƯỚNG 8 TRANG
+===================================================== */
+
+const pages = [...document.querySelectorAll(".page")];
+const progress = document.getElementById("progress");
+
+let currentPage = 0;
+let unlockedPage = 0;
+
+pages.forEach((page, index) => {
+    const dot = document.createElement("button");
+
+    dot.className = "progress-dot" + (index === 0 ? " active" : "");
+    dot.title = "Trang " + (index + 1);
+    dot.setAttribute("aria-label", "Mở trang " + (index + 1));
+
+    dot.addEventListener("click", () => {
+        if (index <= unlockedPage) {
+            goTo(index);
+        }
+    });
+
+    progress.appendChild(dot);
+});
+
+const dots = [...progress.children];
+
+function goTo(index) {
+    if (index < 0 || index > 7) return;
+    if (index > unlockedPage) return;
+
+    pages[currentPage].classList.remove("active");
+
+    currentPage = index;
+
+    pages[currentPage].classList.add("active");
+
+    dots.forEach((dot, i) => {
+        dot.classList.toggle("active", i === index);
+        dot.classList.toggle("done", i < unlockedPage);
+    });
+
+    document.getElementById("prevPage").disabled = index === 0;
+
+    document.getElementById("nextPage").disabled =
+        index === 7 || index >= unlockedPage;
+
+    if (index === 6) {
+        document.getElementById("promise").classList.remove("reveal");
+    }
+
+    if (index === 7) {
+        setTimeout(() => {
+            document.getElementById("finalFlower").classList.add("bloom");
+            document.getElementById("finalCopy").classList.add("show");
+            createPetals(35);
+        }, 450);
+    }
+}
+
+function unlockPage(index) {
+    unlockedPage = Math.max(unlockedPage, index);
+
+    dots.forEach((dot, i) => {
+        dot.classList.toggle("done", i < unlockedPage);
+    });
+
+    document.getElementById("nextPage").disabled =
+        currentPage >= unlockedPage || currentPage === 7;
+}
+
+function unlockButton(pageNumber) {
+    const button = document.querySelector(
+        '.next-action[data-next="' + pageNumber + '"]'
+    );
+
+    if (button) {
+        button.disabled = false;
+    }
+}
+
+document.getElementById("prevPage").addEventListener("click", () => {
+    goTo(currentPage - 1);
+});
+
+document.getElementById("nextPage").addEventListener("click", () => {
+    goTo(currentPage + 1);
+});
+
+document.querySelectorAll(".next-action").forEach(button => {
+    button.addEventListener("click", () => {
+        const next = Number(button.dataset.next);
+        unlockPage(next);
+        goTo(next);
+    });
+});
+
+
+/* =====================================================
+   2. TRANG 1 – HOA NỞ
+===================================================== */
+
+const firstFlower = document.getElementById("firstFlower");
+const enterGarden = document.getElementById("enterGarden");
+
+function bloomFirstFlower() {
+    firstFlower.classList.add("bloomed");
+
+    document.getElementById("openingText").textContent =
+        "Nụ hoa đã nở. Khu vườn kỷ niệm đang chờ cô bước vào.";
+
+    enterGarden.textContent = "Bước vào khu vườn";
+
+    enterGarden.onclick = () => goTo(1);
+
+    unlockPage(1);
+
+    createPetals(20);
+}
+
+firstFlower.addEventListener("click", bloomFirstFlower);
+enterGarden.addEventListener("click", bloomFirstFlower);
+
+
+/* =====================================================
+   3. TRANG 2 – PHONG THƯ
+===================================================== */
+
+const envelope = document.getElementById("envelope");
+
+function toggleEnvelope() {
+    envelope.classList.toggle("open");
+
+    if (envelope.classList.contains("open")) {
+        document.getElementById("letterHint").textContent =
+            "Từng dòng chữ là tình cảm chân thành của chúng em.";
+
+        unlockButton(2);
+        unlockPage(2);
+
+        createPetals(8);
+    }
+}
+
+envelope.addEventListener("click", toggleEnvelope);
+
+envelope.addEventListener("keydown", event => {
+    if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        toggleEnvelope();
+    }
+});
+
+document.getElementById("envelopeToggle").addEventListener(
+    "click",
+    toggleEnvelope
+);
+
+
+/* =====================================================
+   4. TRANG 3 – NĂM ĐÓA HOA
+===================================================== */
+
+const openedFlowers = new Set();
+
+document.querySelectorAll(".memory-flower").forEach((flower, index) => {
+    flower.addEventListener("click", () => {
+
+        flower.classList.add("opened");
+        openedFlowers.add(index);
+
+        const card = document.getElementById("memoryCard");
+
+        card.textContent = flower.dataset.message;
+        card.classList.add("show");
+
+        document.getElementById("flowerCount").textContent =
+            openedFlowers.size + " / 5 đóa hoa đã nở";
+
+        createPetals(5);
+
+        if (openedFlowers.size === 5) {
+            unlockButton(3);
+            unlockPage(3);
+        }
+    });
+});
+
+
+/* =====================================================
+   5. TRANG 4 – ALBUM POLAROID
+===================================================== */
+
+const photoModal = document.getElementById("photoModal");
+const modalImage = document.getElementById("modalImage");
+
+document.querySelectorAll(".polaroid").forEach(card => {
+
+    card.addEventListener("click", () => {
+
+        const image = card.querySelector("img");
+        const source = card.dataset.img;
+
+        if (image.getAttribute("src")) {
+            modalImage.src = source;
+        } else {
+            modalImage.removeAttribute("src");
+            modalImage.style.background =
+                "linear-gradient(135deg,#f4dce5,#e8e0ef)";
+            modalImage.style.width = "min(70vw,420px)";
+            modalImage.style.height = "min(70vh,420px)";
+        }
+
+        photoModal.classList.add("show");
+    });
+});
+
+function closePhoto() {
+    photoModal.classList.remove("show");
+}
+
+document.getElementById("closePhoto").addEventListener(
+    "click",
+    closePhoto
+);
+
+photoModal.addEventListener("click", event => {
+    if (event.target === photoModal) {
+        closePhoto();
+    }
+});
+
+
+/* =====================================================
+   6. TRANG 5 – ÂM NHẠC
+===================================================== */
+
+const music = document.getElementById("bgMusic");
+const vinyl = document.getElementById("vinyl");
+const wave = document.getElementById("wave");
+
+for (let i = 0; i < 27; i++) {
+    const bar = document.createElement("i");
+    bar.style.animationDelay = (Math.random() * .7) + "s";
+    wave.appendChild(bar);
+}
+
+function playMusic() {
+    music.play().then(() => {
+        vinyl.classList.add("playing");
+        wave.classList.add("active");
+
+        document.getElementById("playMusic").textContent = "♫";
+        document.getElementById("musicToggle").textContent = "♫ Đang phát";
+
+        document.getElementById("musicNote").textContent =
+            "Giai điệu đang vang lên trong khu vườn.";
+    }).catch(() => {
+        document.getElementById("musicNote").textContent =
+            "Chưa tìm thấy tệp nhạc. Hãy đặt tệp nhac.mp3 cạnh index.html rồi thử lại.";
+    });
+}
+
+function pauseMusic() {
+    music.pause();
+
+    vinyl.classList.remove("playing");
+    wave.classList.remove("active");
+
+    document.getElementById("playMusic").textContent = "▶";
+    document.getElementById("musicToggle").textContent = "♫ Bật nhạc";
+}
+
+document.getElementById("playMusic").addEventListener(
+    "click",
+    playMusic
+);
+
+document.getElementById("pauseMusic").addEventListener(
+    "click",
+    pauseMusic
+);
+
+document.getElementById("musicToggle").addEventListener("click", () => {
+    if (music.paused) {
+        playMusic();
+    } else {
+        pauseMusic();
+    }
+});
+
+music.addEventListener("error", () => {
+    document.getElementById("musicNote").textContent =
+        "Chưa có tệp nhac.mp3. Cô vẫn có thể tiếp tục khám phá khu vườn.";
+});
+
+
+/* =====================================================
+   7. TRANG 6 – TÁM NGÔI SAO LỜI CHÚC
+===================================================== */
+
+const wishes = [
+    "Mong cô luôn mạnh khỏe, để mỗi ngày đều tràn đầy năng lượng.",
+    "Chúc cô luôn bình an trong cuộc sống.",
+    "Mong nụ cười luôn nở trên môi cô.",
+    "Chúc cô giữ mãi nhiệt huyết và tình yêu với nghề.",
+    "Mong mọi dự định của cô đều thuận lợi.",
+    "Chúc cô gặp thật nhiều may mắn.",
+    "Mong cô luôn nhận được yêu thương và trân trọng.",
+    "Chúc cô có thật nhiều niềm vui và hạnh phúc."
+];
+
+const starPositions = [
+    [48, 5],
+    [76, 17],
+    [88, 49],
+    [73, 76],
+    [47, 83],
+    [20, 72],
+    [8, 43],
+    [24, 14]
+];
+
+const starField = document.getElementById("starField");
+const seenStars = new Set();
+
+starPositions.forEach(([x, y], index) => {
+
+    const star = document.createElement("button");
+
+    star.className = "wish-star";
+    star.textContent = "✧";
+
+    star.style.left = x + "%";
+    star.style.top = y + "%";
+
+    star.setAttribute(
+        "aria-label",
+        "Lời chúc thứ " + (index + 1)
+    );
+
+    star.addEventListener("click", () => {
+
+        star.classList.add("seen");
+        star.textContent = "✦";
+
+        seenStars.add(index);
+
+        const box = document.getElementById("wishBox");
+
+        box.textContent = wishes[index];
+        box.classList.add("show");
+
+        document.getElementById("starCount").textContent =
+            seenStars.size + " / 8 lời chúc đã được thắp sáng";
+
+        createPetals(4);
+
+        if (seenStars.size === 8) {
+            unlockButton(6);
+            unlockPage(6);
+        }
+    });
+
+    starField.appendChild(star);
+});
+
+
+/* =====================================================
+   8. TRANG 7 – LỜI HỨA
+===================================================== */
+
+document.getElementById("revealPromise").addEventListener(
+    "click",
+    () => {
+
+        document.getElementById("promise").classList.add("reveal");
+
+        unlockButton(7);
+        unlockPage(7);
+
+        createPetals(15);
+    }
+);
+
+
+/* =====================================================
+   9. TRANG 8 – KẾT THÚC VÀ PHÁT LẠI
+===================================================== */
+
+document.getElementById("replay").addEventListener("click", () => {
+
+    pauseMusic();
+
+    currentPage = 0;
+    unlockedPage = 0;
+
+    pages.forEach((page, index) => {
+        page.classList.toggle("active", index === 0);
+    });
+
+    dots.forEach((dot, index) => {
+        dot.classList.toggle("active", index === 0);
+        dot.classList.remove("done");
+    });
+
+    document.getElementById("prevPage").disabled = true;
+    document.getElementById("nextPage").disabled = true;
+
+    firstFlower.classList.remove("bloomed");
+
+    document.getElementById("openingText").textContent =
+        "Cô hãy chạm vào nụ hoa nhỏ, để khu vườn kỷ niệm của 8C5 bắt đầu thức giấc.";
+
+    enterGarden.textContent = "Chạm để khu vườn nở hoa";
+    enterGarden.onclick = bloomFirstFlower;
+
+    envelope.classList.remove("open");
+
+    document.getElementById("letterHint").textContent =
+        "Chạm vào phong thư để mở lời yêu thương.";
+
+    openedFlowers.clear();
+
+    document.querySelectorAll(".memory-flower").forEach(flower => {
+        flower.classList.remove("opened");
+    });
+
+    document.getElementById("memoryCard").classList.remove("show");
+
+    document.getElementById("flowerCount").textContent =
+        "0 / 5 đóa hoa đã nở";
+
+    seenStars.clear();
+
+    document.querySelectorAll(".wish-star").forEach(star => {
+        star.classList.remove("seen");
+        star.textContent = "✧";
+    });
+
+    document.getElementById("wishBox").classList.remove("show");
+
+    document.getElementById("starCount").textContent =
+        "0 / 8 lời chúc đã được thắp sáng";
+
+    document.getElementById("promise").classList.remove("reveal");
+
+    document.getElementById("finalFlower").classList.remove("bloom");
+    document.getElementById("finalCopy").classList.remove("show");
+
+    document.querySelectorAll(".next-action").forEach(button => {
+        button.disabled = true;
+    });
+});
+
+
+/* =====================================================
+   10. HIỆU ỨNG CÁNH HOA BAY
+===================================================== */
+
+function createPetals(amount = 12) {
+
+    const layer = document.getElementById("petal-layer");
+
+    for (let i = 0; i < amount; i++) {
+
+        const petal = document.createElement("span");
+
+        petal.className = "petal";
+
+        petal.style.left = (Math.random() * 100) + "%";
+
+        petal.style.animationDuration =
+            (5 + Math.random() * 5) + "s";
+
+        petal.style.setProperty(
+            "--drift",
+            (Math.random() * 240 - 120) + "px"
+        );
+
+        petal.style.animationDelay =
+            (Math.random() * .8) + "s";
+
+        layer.appendChild(petal);
+
+        setTimeout(() => {
+            petal.remove();
+        }, 11000);
+    }
+}
+
+/* Cánh hoa rơi nhẹ nhàng theo thời gian */
+setInterval(() => {
+    if (!document.hidden) {
+        createPetals(2);
+    }
+}, 2600);
+
+
+/* =====================================================
+   11. ÁNH SÁNG ĐI THEO CON TRỎ
+===================================================== */
+
+const cursorLight = document.getElementById("cursor-light");
+
+let mouseX = -300;
+let mouseY = -300;
+let lightX = -300;
+let lightY = -300;
+
+window.addEventListener("pointermove", event => {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+}, { passive: true });
+
+function animateCursor() {
+
+    lightX += (mouseX - lightX) * .13;
+    lightY += (mouseY - lightY) * .13;
+
+    cursorLight.style.left = lightX + "px";
+    cursorLight.style.top = lightY + "px";
+
+    requestAnimationFrame(animateCursor);
+}
+
+animateCursor();
+
+
+/* =====================================================
+   12. PHÍM TẮT VÀ ĐÓNG ẢNH
+===================================================== */
+
+document.addEventListener("keydown", event => {
+
+    if (event.key === "Escape") {
+        closePhoto();
+    }
+
+    if (event.key === "ArrowRight" && currentPage < unlockedPage) {
+        goTo(currentPage + 1);
+    }
+
+    if (event.key === "ArrowLeft" && currentPage > 0) {
+        goTo(currentPage - 1);
+    }
+});
+
+</script>
+</body>
+</html>
